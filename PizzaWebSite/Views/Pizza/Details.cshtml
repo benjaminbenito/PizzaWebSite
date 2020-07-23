@@ -1,0 +1,13 @@
+﻿@model PizzaWebSite.Models.PizzaCreateViewModel
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details de Pizza</h2>
+
+@Html.Partial("_PizzaDetailDelete")
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Pizza.Id }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
