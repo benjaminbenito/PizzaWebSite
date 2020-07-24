@@ -105,7 +105,7 @@ namespace PizzaWebSite.Controllers
             {
                 if (ModelState.IsValid)
                 {
-                    if (FakeDbPizza.Instance.Pizza.Any(p => p.Nom.ToLower() == vm.Pizza.Nom.ToLower()))
+                    if (FakeDbPizza.Instance.Pizza.Any(p => p.Nom.ToLower() == vm.Pizza.Nom.ToLower() && p.Id != vm.Pizza.Id ))
                     {
                         ModelState.AddModelError("", "Pizza with this name alrealy exist.");
                         vm.Pates = FakeDbPizza.Instance.PatesDisponibles.Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Nom }).ToList();
