@@ -48,13 +48,24 @@ namespace PizzaWebSite.Controllers
         {
             try
             {
-                Pizza pizza = vm.Pizza;
-                pizza.Pate = FakeDbPizza.Instance.PatesDisponibles.FirstOrDefault(x => x.Id == vm.IdSelectedPate);
-                pizza.Ingredients = FakeDbPizza.Instance.IngredientsDisponibles.Where(x => vm.IdSelectedIngredients.Contains(x.Id)).ToList();
-                pizza.Id = FakeDbPizza.Instance.Pizza.Count == 0 ? 1 : FakeDbPizza.Instance.Pizza.Max(x => x.Id) + 1;
-                FakeDbPizza.Instance.Pizza.Add(pizza);
+                if (ModelState.IsValid)
+                {
+                    if (FakeDbPizza.Instance.Pizza.Any(p => p.Nom.ToLower() == vm.Pizza.Nom.ToLower()))
+                    {
+                        ModelState.AddModelError("", "Pizza with this name alrealy exist.");
+                        vm.Pates = FakeDbPizza.Instance.PatesDisponibles.Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Nom }).ToList();
+                        vm.Ingredients = FakeDbPizza.Instance.IngredientsDisponibles.Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Nom }).ToList();
+                        return View(vm);
+                    }
+                    Pizza pizza = vm.Pizza;
+                    pizza.Pate = FakeDbPizza.Instance.PatesDisponibles.FirstOrDefault(x => x.Id == vm.IdSelectedPate);
+                    pizza.Ingredients = FakeDbPizza.Instance.IngredientsDisponibles.Where(x => vm.IdSelectedIngredients.Contains(x.Id)).ToList();
+                    pizza.Id = FakeDbPizza.Instance.Pizza.Count == 0 ? 1 : FakeDbPizza.Instance.Pizza.Max(x => x.Id) + 1;
+                    FakeDbPizza.Instance.Pizza.Add(pizza);
 
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                }
+                return View();
 
             }
             catch
@@ -68,7 +79,7 @@ namespace PizzaWebSite.Controllers
 
         // GET: Pizza/Edit/5
         public ActionResult Edit(int id)
-        {
+        {   
             PizzaCreateViewModel vm = new PizzaCreateViewModel();
             vm.Pizza = FakeDbPizza.Instance.Pizza.FirstOrDefault(x => x.Id == id);
             vm.Ingredients = FakeDbPizza.Instance.IngredientsDisponibles.Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Nom }).ToList();
@@ -92,12 +103,23 @@ namespace PizzaWebSite.Controllers
         {
             try
             {
-                Pizza pizza = FakeDbPizza.Instance.Pizza.FirstOrDefault(x => x.Id == vm.Pizza.Id);
-                pizza.Nom = vm.Pizza.Nom;
-                pizza.Pate = FakeDbPizza.Instance.PatesDisponibles.FirstOrDefault(x => x.Id == vm.IdSelectedPate);
-                pizza.Ingredients = FakeDbPizza.Instance.IngredientsDisponibles.Where(x => vm.IdSelectedIngredients.Contains(x.Id)).ToList();
+                if (ModelState.IsValid)
+                {
+                    if (FakeDbPizza.Instance.Pizza.Any(p => p.Nom.ToLower() == vm.Pizza.Nom.ToLower()))
+                    {
+                        ModelState.AddModelError("", "Pizza with this name alrealy exist.");
+                        vm.Pates = FakeDbPizza.Instance.PatesDisponibles.Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Nom }).ToList();
+                        vm.Ingredients = FakeDbPizza.Instance.IngredientsDisponibles.Select(x => new SelectListItem() { Value = x.Id.ToString(), Text = x.Nom }).ToList();
+                        return View(vm);
+                    }
+                    Pizza pizza = FakeDbPizza.Instance.Pizza.FirstOrDefault(x => x.Id == vm.Pizza.Id);
+                    pizza.Nom = vm.Pizza.Nom;
+                    pizza.Pate = FakeDbPizza.Instance.PatesDisponibles.FirstOrDefault(x => x.Id == vm.IdSelectedPate);
+                    pizza.Ingredients = FakeDbPizza.Instance.IngredientsDisponibles.Where(x => vm.IdSelectedIngredients.Contains(x.Id)).ToList();
 
-                return RedirectToAction("Index");
+                    return RedirectToAction("Index");
+                }
+                return View();
             }
             catch
             {
